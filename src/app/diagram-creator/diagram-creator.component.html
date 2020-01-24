@@ -1,0 +1,27 @@
+<div class="container">
+
+  <div class="diagram-boundary" (dblclick)="openDialog($event)">
+    <div class="state"
+         (dblclick)="toggleAcceptableState($event)"
+         *ngFor="let state of states"
+         [id]="state.name"
+         cdkDrag cdkDragBoundary=".nodes-boundary">
+
+      <div *ngIf="state.isInitial" id="triangle-right"></div>
+
+      <button class="state-options-menu"
+              mat-button
+              [matMenuTriggerFor]="afterMenu">{{state.name}}
+      </button>
+
+      <mat-menu #afterMenu="matMenu" xPosition="after">
+        <button mat-menu-item (click)="setInitialState(state.name)">initial state</button>
+        <button mat-menu-item>rename state</button>
+        <button mat-menu-item>remove state</button>
+      </mat-menu>
+    </div>
+  </div>
+</div>
+
+
+

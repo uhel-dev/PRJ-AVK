@@ -1,0 +1,65 @@
+
+.diagram-boundary {
+  height: 65vh;
+  width: 85vw;
+  max-width: 100%;
+  border: dotted #ccc 2px;
+}
+
+
+
+.state {
+  height: 9vh;
+  //border: solid 1px #ccc;
+  border: 0.8px solid black;
+  border-radius: 50%;
+  color: rgba(0, 0, 0, 0.87);
+  cursor: move;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #fff;
+  margin-right: 25px;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+  padding: 10px;
+  transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.state:active {
+}
+
+.state-acceptable-state-add {
+  border: 0.8px solid white;
+  box-shadow: 0 0 0 1px black, inset 0 0 0 1px black;
+}
+
+.state-acceptable-state-remove {
+  border: 0.8px solid black;
+  box-shadow: 0 0 0 1px white, inset 0 0 0 1px white;
+}
+
+.state-options-menu {
+  padding: 0px;
+  margin: 0px;
+  width: 100%;
+  height:100%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  display: block;
+}
+
+
+#triangle-right {
+  width: 0;
+  height: 0;
+  margin-left: -10vh;
+  position: absolute;
+  background: white;
+  border-top: 12px solid transparent;
+  border-left: 23px solid black;
+  border-bottom: 12px solid transparent;
+}
