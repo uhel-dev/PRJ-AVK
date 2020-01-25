@@ -1,54 +1,104 @@
-import {Component, Inject, OnInit, Pipe, PipeTransform} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {DialogData} from '../diagram-creator.component';
-import {FormGroup} from '@angular/forms';
+import {Component, Inject, OnInit} from '@angular/core';
+import {ErrorStateMatcher, MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {AbstractControl, FormControl, FormGroupDirective, NgForm, Validator, ValidatorFn, Validators} from '@angular/forms';
 
+export interface NewStateDialogData {
+
+  stateName: string;
+  isInitialState: boolean;
+  isAcceptableState: boolean;
+  states: Array<any>;
+}
 
 @Component({
   selector: 'app-new-state-dialog',
   templateUrl: './new-state-dialog.component.html',
   styleUrls: ['./new-state-dialog.component.scss']
 })
-
-
-
 export class NewStateDialogComponent implements OnInit {
 
-  states: Array<any> = []
+  stateNameFormControl: FormControl;
+  isInitialFormControl: FormControl;
+  isAcceptableFormControl: FormControl;
+
+  matcher: MyErrorStateMatcher;
   disableButton: boolean = false
-  sameStateNameUsed: boolean = true
+  isStateAlreadyInStates: boolean = false
+
+
+
+
+
+
 
   constructor(
     public dialogRef: MatDialogRef<NewStateDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+    @Inject(MAT_DIALOG_DATA) public data: NewStateDialogData) {
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-  ngOnInit(): void {
+  closingDialog(): void {
+    this.dialogRef.keydownEvents().subscribe(event => {
+      if (event.key === "Escape") {
+        this.onNoClick();
+      }
+    });
+
+    this.dialogRef.backdropClick().subscribe(event => {
+      this.onNoClick();
+    });
+  }
+
+  validateDialog(): void {
+    this.matcher = new MyErrorStateMatcher();
+    this.stateNameFormControl = new FormControl('', [
+      Validators.required,
+      Validators.maxLength(20),
+      NoDuplicateStateCustomValidator.validate(this.data)]
+    );
+    this.isInitialFormControl = new FormControl('', [])
+    this.isAcceptableFormControl = new FormControl('', [])
 
   }
 
-  checkValidStateName(event) {
-    const target = event.target || event.srcElement || event.currentTarget;
-    const value = target.value
-    console.log(value)
-    const numberOfAlreadyExistingElements = this.data.states.filter(state => state.name === value).length
-    if(numberOfAlreadyExistingElements !== 0){
-      this.disableButton = true
-      this.sameStateNameUsed = false
-    }
-    else {
-      this.disableButton = false
-      this.sameStateNameUsed = true
-    }
+  ngOnInit(): void {
+    this.closingDialog()
+    this.validateDialog()
+
   }
 
   onNewState() {
-    const output = { name: this.data.stateName, isAcceptableState: this.data.isAcceptableState, isInitialState: this.data.isInitialState}
-    this.dialogRef.close(output)
+    if (this.stateNameFormControl.value) {
+      const output = { name: this.stateNameFormControl.value, isAcceptableState:this.isAcceptableFormControl.value === true, isInitialState: this.isInitialFormControl.value === true}
+      this.dialogRef.close(output)
+    } else {
+      this.dialogRef.close(null)
+    }
   }
 }
 
+/** Error when invalid control is dirty, touched, or submitted. */
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  constructor() {}
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
+
+export class NoDuplicateStateCustomValidator {
+  static validate(data): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: boolean } | null =>
+    {
+      const numberOfAlreadyExistingElements = data.states.filter(state => state.name === control.value).length
+      if (control.value !== undefined && (isNaN(control.value) && numberOfAlreadyExistingElements !== 0)) {
+        return {'duplicateState': true};
+      } else {
+        return null;
+      }
+    }
+  }
+}

@@ -1,32 +1,32 @@
 <h1 mat-dialog-title>New State</h1>
+<form class="new-state-form">
+  <mat-form-field hintLabel="Max 10 characters">
+    <input matInput placeholder="Name of new state"
+           #stateName
+           [formControl]="stateNameFormControl"
+           maxlength="10"
+           (keydown.enter)="$event.preventDefault()"
+           [errorStateMatcher]="matcher">
 
-<div class="dialog-content" mat-dialog-content>
-  <!--<p></p>-->
-    <mat-form-field>
-      <input name="stateName"
-             #stateName="ngModel"
-             matInput
-             [(ngModel)]="data.stateName"
-             maxlength="20"
-             required
-             (change)="checkValidStateName($event)"
-             placeholder="Enter New State Name" >
-      <mat-hint *ngIf="sameStateNameUsed" align="end">{{stateName.value?.length || 0}}/20</mat-hint>
-      <mat-hint style="color: red;" *ngIf="!sameStateNameUsed" align="end">State name already used.</mat-hint>
-    </mat-form-field>
-    <mat-checkbox [(ngModel)]="data.isInitialState">  Initial State</mat-checkbox>
-    <mat-checkbox [(ngModel)]="data.isAcceptableState">Acceptable State</mat-checkbox>
-    <div mat-dialog-actions style="float: right">
-      <button mat-button (click)="onNoClick()">Not Now</button>
-      <button mat-button (click)="onNewState()"
-              id="new-state-submit-btn"
-              [disabled]="!stateName.value || disableButton"
-              [mat-dialog-close]="data.stateName"
-              cdkFocusInitial>
-        Create
-      </button>
-    </div>
-</div>
+    <mat-hint align="end">{{stateName.value?.length || 0}}/10</mat-hint>
 
+    <mat-error *ngIf="stateNameFormControl?.hasError('duplicateState') && !stateNameFormControl?.hasError('required')">
+      State already exists.
+    </mat-error>
+    <mat-error *ngIf="stateNameFormControl?.hasError('required')">
+      State name is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <mat-checkbox [formControl]="isInitialFormControl">Initial State</mat-checkbox>
+  <mat-checkbox [formControl]="isAcceptableFormControl">Acceptable State</mat-checkbox>
+  <div mat-dialog-actions style="float: right">
+    <button mat-button (click)="onNoClick()">Not Now</button>
+    <button mat-button (click)="onNewState()"
+    id="new-state-submit-btn"
+    [mat-dialog-close]="data.stateName"
+    cdkFocusInitial
+    [disabled]="stateNameFormControl?.hasError('duplicateState') || stateNameFormControl?.hasError('required')">Create
+  </button>
+  </div>
+</form>
 
-<!-- When backtracking create class store them on stack and when fail pop until empty-->

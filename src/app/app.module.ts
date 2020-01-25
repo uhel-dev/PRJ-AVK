@@ -8,12 +8,14 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MaterialModule} from '../material/material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { NewStateDialogComponent } from './diagram-creator/new-state-dialog/new-state-dialog.component';
+import { RenameStateDialogComponent } from './diagram-creator/rename-state-dialog/rename-state-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DiagramCreatorComponent,
-    NewStateDialogComponent
+    NewStateDialogComponent,
+    RenameStateDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +27,7 @@ import { NewStateDialogComponent } from './diagram-creator/new-state-dialog/new-
   ],
   providers: [MaterialModule],
   bootstrap: [AppComponent],
-  entryComponents: [NewStateDialogComponent]
+  entryComponents: [NewStateDialogComponent, RenameStateDialogComponent]
 })
 export class AppModule {}
 // const t1 = {'qEven', 'qOdd', 1}

@@ -31,15 +31,6 @@
 .state:active {
 }
 
-.state-acceptable-state-add {
-  border: 0.8px solid white;
-  box-shadow: 0 0 0 1px black, inset 0 0 0 1px black;
-}
-
-.state-acceptable-state-remove {
-  border: 0.8px solid black;
-  box-shadow: 0 0 0 1px white, inset 0 0 0 1px white;
-}
 
 .state-options-menu {
   padding: 0px;
@@ -56,10 +47,37 @@
 #triangle-right {
   width: 0;
   height: 0;
-  margin-left: -10vh;
+  margin-left: -9vh;
   position: absolute;
-  background: white;
   border-top: 12px solid transparent;
   border-left: 23px solid black;
   border-bottom: 12px solid transparent;
+}
+
+#circle-around {
+  position:absolute;
+  height: 83%;
+  width: 85%;
+  border: 0.8px solid black;
+  border-radius: 50%;
+  background: white;
+}
+
+.inner-triangle {
+  width: 0;
+  height: 0;
+  margin-left: -9.6vh;
+  position: absolute;
+  border-top: 7px solid transparent;
+  border-left: 20px solid white;
+  border-bottom: 7px solid transparent;
+}
+
+.dot {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: blue;
+  position: absolute;
+  text-align: center;
 }

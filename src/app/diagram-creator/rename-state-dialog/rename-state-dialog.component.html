@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>Rename State</h1>
+<form class="new-state-form">
+  <mat-form-field hintLabel="Max 10 characters">
+    <input matInput placeholder="Rename current state"
+           #stateName
+           [formControl]="renameStateNameFormControl"
+           maxlength="10"
+           (keydown.enter)="$event.preventDefault()"
+           [errorStateMatcher]="matcher">
+    <mat-hint align="end">{{stateName.value?.length || 0}}/10</mat-hint>
+
+    <mat-error *ngIf="renameStateNameFormControl?.hasError('duplicateState') && !renameStateNameFormControl?.hasError('required')">
+      State already exists.
+    </mat-error>
+    <mat-error *ngIf="renameStateNameFormControl?.hasError('required')">
+      State name is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <div mat-dialog-actions style="float: right">
+    <button mat-button (click)="onNoClick()">Not Now</button>
+    <button mat-button (click)="renameState()"
+            id="new-state-submit-btn"
+            [mat-dialog-close]="data.stateName"
+            cdkFocusInitial
+            [disabled]="renameStateNameFormControl?.hasError('duplicateState') || renameStateNameFormControl?.hasError('required')">Rename
+    </button>
+  </div>
+</form>
