@@ -1,0 +1,26 @@
+.state-container {
+  max-height: 11vh;
+  border: 1px solid black;
+  max-width: 7vw;
+  min-width: 4vw;
+  min-height: 9vh;
+}
+
+.state-initial-arrow {
+  height: 100%;
+  width: 30%;
+  float:left;
+  margin: 0;
+  border: 1px solid red;
+//  position: absolute;
+//  top: 50%;
+//  -ms-transform: translateY(-50%);
+//  transform: translateY(-50%);
+  vertical-align: middle;
+}
+
+.state-node {
+  float:left;
+  border: 1px solid blue;
+  border-radius: 50%;
+}

@@ -55,7 +55,7 @@ export class RenameStateDialogComponent implements OnInit {
     this.matcher = new MyErrorStateMatcher();
     this.renameStateNameFormControl = new FormControl('', [
       Validators.required,
-      Validators.maxLength(20),
+      Validators.maxLength(10),
       NoDuplicateStateCustomValidator.validate(this.data)]
     );
   }

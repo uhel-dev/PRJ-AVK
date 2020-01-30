@@ -19,7 +19,7 @@
   <div mat-dialog-actions style="float: right">
     <button mat-button (click)="onNoClick()">Not Now</button>
     <button mat-button (click)="renameState()"
-            id="new-state-submit-btn"
+            class="new-state-submit-btn"
             [mat-dialog-close]="data.stateName"
             cdkFocusInitial
             [disabled]="renameStateNameFormControl?.hasError('duplicateState') || renameStateNameFormControl?.hasError('required')">Rename

@@ -9,13 +9,19 @@ import {MaterialModule} from '../material/material.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { NewStateDialogComponent } from './diagram-creator/new-state-dialog/new-state-dialog.component';
 import { RenameStateDialogComponent } from './diagram-creator/rename-state-dialog/rename-state-dialog.component';
+import { ConnectDialogComponent } from './diagram-creator/connect-dialog/connect-dialog.component';
+import { StateComponent } from './diagram-creator/state/state.component';
+import { ToolkitComponent } from './toolkit/toolkit.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DiagramCreatorComponent,
     NewStateDialogComponent,
-    RenameStateDialogComponent
+    RenameStateDialogComponent,
+    ConnectDialogComponent,
+    StateComponent,
+    ToolkitComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +33,7 @@ import { RenameStateDialogComponent } from './diagram-creator/rename-state-dialo
   ],
   providers: [MaterialModule],
   bootstrap: [AppComponent],
-  entryComponents: [NewStateDialogComponent, RenameStateDialogComponent]
+  entryComponents: [NewStateDialogComponent, RenameStateDialogComponent, ConnectDialogComponent]
 })
 export class AppModule {}
 // const t1 = {'qEven', 'qOdd', 1}

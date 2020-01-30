@@ -1,107 +1,78 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {MatDialog, MatDialogConfig, MatDialogRef, MatMenuTrigger} from '@angular/material';
-import {NewStateDialogComponent} from './new-state-dialog/new-state-dialog.component';
-import {RenameStateDialogComponent} from './rename-state-dialog/rename-state-dialog.component';
+import {AfterViewChecked, AfterViewInit, Component, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material';
+import {DialogsManagerService} from './dialogs-manager.service';
+import {StateTransition} from './mixins/state';
+import {JsPlumbManagerService} from './js-plumb-manager.service';
 
-
-
-export class State {
-  name: string;
-  isInitial: boolean;
-  isAcceptable: boolean;
-}
 
 @Component({
   selector: 'app-diagram-creator',
   templateUrl: './diagram-creator.component.html',
   styleUrls: ['./diagram-creator.component.scss']
 })
-export class DiagramCreatorComponent implements OnInit, AfterViewInit {
+export class DiagramCreatorComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
-  opened: boolean
-  states: Array<any> = []
+  transitions: Array<StateTransition> = [];
+  states: Array<any> = [];
+  jsPlumbInstance;
+  canvas;
+  currentStateLength: number = this.states.length
+  showLabelsMenu: boolean;
+  bendness;
 
-
-  constructor(public dialog: MatDialog, private elementRef: ElementRef) {
+  constructor(private dialogsManagerService: DialogsManagerService, public dialog: MatDialog, private jsPlumbManagerService: JsPlumbManagerService) {
   }
 
 
   ngOnInit() {
-
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if(event.code === 'ShiftLeft') {
-      // this.states.forEach(state => this.positionTarget(state.name))
-    }
+    this.jsPlumbManagerService.setUpJsPlumbInstance()
   }
 
   ngAfterViewInit(): void {
+    this.canvas = document.getElementById('diagram-boundary-id')
+    this.jsPlumbManagerService.bindCustomConnectionEvent(this.states, this.transitions)
+    this.jsPlumbManagerService.bindCustomConnectionDetachedEvent(this.transitions)
   }
 
-  createNewState(stateName, isAcceptable, isInitial, x, y) {
-    if(this.states.length != 20) {
-      this.states.push({name: stateName, isAcceptable: isAcceptable, isInitial: isInitial, x: x, y: y})
+  ngAfterViewChecked(): void {
 
+    if(this.currentStateLength !== this.states.length) {
+      const state = this.states[this.currentStateLength]
+      const stateEl = document.getElementById(state.name)
+      this.jsPlumbManagerService.makeElementASource(state.name, stateEl, this.canvas)
+      this.jsPlumbManagerService.makeElementATarget(state.name)
+      this.currentStateLength = this.states.length
     }
+
+  }
+
+  formatLabel(value: number) {
+    this.bendness = value
+    return value;
   }
 
   openNewStateDialog(event): void {
-    if(this.getElementIdByEvent(event) === null || this.states.length === 0) {
-      console.log(event.target)
-      if(event.target.id) {
-        console.log(event.target.id)
+      let x = event.offsetX
+      let y = event.offsetY
+      if(event.shiftKey) {
+        this.states.push({name: "P" + this.states.length, isAcceptable: false, isInitial: false, top: y, left: x})
       }
-      let x = event.clientX;
-      let y = event.clientY - 90;
-      const dataIn = {states: this.states}
-      const dialogConfig = DiagramCreatorComponent.getDialogGlobalConfigs(dataIn)
-      const dialogRef = this.dialog.open(NewStateDialogComponent, dialogConfig);
-
-      dialogRef.afterClosed().subscribe(result => {
-        if(result) {
-          const isDuplicate = this.states.filter(state => state.name === result.name).length > 0
-          if(!isDuplicate) {
-            let stateName = result.name;
-            let isAcceptable = result.isAcceptableState
-            let isInitial = result.isInitialState
-            if(isInitial === true) {
-              const currentInitialState = this.states.filter(s => s.isInitial)
-              currentInitialState.forEach(state => state.isInitial = false)
-            }
-            this.createNewState(stateName, isAcceptable, isInitial,x , y)
-          }
-        }
-      });
-    }
+      else {
+        const isCreated = this.dialogsManagerService.openNewStateDialog(x, y, this.states)
+      }
   }
 
   openRenameStateDialog(stateName): void {
-    const dataIn = {states: this.states, StateName: stateName}
-    const dialogConfig = DiagramCreatorComponent.getDialogGlobalConfigs(dataIn)
-    const dialogRef = this.dialog.open(RenameStateDialogComponent, dialogConfig)
-
-    dialogRef.afterClosed().subscribe(result => {
-      let state = this.states.filter(state => state.name === stateName)[0]
-      state.name = result
-    })
+    this.dialogsManagerService.openRenameStateDialog(stateName, this.states)
   }
 
-  getElementIdByEvent(event) {
-    const target = event.target || event.srcElement || event.currentTarget;
-    const idAttr = target.attributes.id;
-    if(idAttr) return idAttr.nodeValue;
-    else return null
-  }
+
   toggleAcceptableState(stateName) {
     let state = this.states.filter(state => state.name === stateName)[0]
     state.isAcceptable = !state.isAcceptable
   }
 
-
-
-  setInitialState(stateName) {
+  toggleInitialState(stateName) {
     const state = this.states.filter(s => s.name === stateName)[0];
     const currentInitialState = this.states.filter(s => s.isInitial && s.name !== stateName)
     currentInitialState.forEach(state => state.isInitial = false)
@@ -112,15 +83,9 @@ export class DiagramCreatorComponent implements OnInit, AfterViewInit {
     this.states = this.states.filter(state => state.name !== stateName)
   }
 
-  static getDialogGlobalConfigs(dataIn: any): MatDialogConfig {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '280px';
-    dialogConfig.data = dataIn
-    return dialogConfig
+  restartCanvas() {
+    this.jsPlumbManagerService.restartCanvas()
+    this.transitions = []
   }
-
-
 }
 

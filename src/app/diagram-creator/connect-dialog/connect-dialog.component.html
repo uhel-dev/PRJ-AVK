@@ -1,0 +1,25 @@
+<h1 mat-dialog-title style="margin: 0px 0px -5px;">Connect States</h1>
+<form class="new-state-form">
+
+  <mat-form-field hintLabel="Max 10 characters">
+    <input matInput placeholder="Transition label"
+           #transition
+           [formControl]="transitionLabelFormControl"
+           maxlength="10"
+           (keydown.enter)="$event.preventDefault()"
+           [errorStateMatcher]="matcher">
+    <mat-hint align="end">{{transition.value?.length || 0}}/10</mat-hint>
+  </mat-form-field>
+
+
+  <div mat-dialog-actions style="float: right">
+    <button mat-button (click)="onNoClick()">Not Now</button>
+    <button mat-button (click)="createTransitionLabel()"
+            class="new-state-submit-btn"
+            [mat-dialog-close]="data.stateName"
+            [disabled]="transition.value?.length < 1"
+            cdkFocusInitial
+            >Connect
+    </button>
+  </div>
+</form>

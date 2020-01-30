@@ -2,3 +2,26 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.aLabel {
+  -webkit-transition: background-color 0.25s ease-in;
+  -moz-transition: background-color 0.25s ease-in;
+  transition: background-color 0.25s ease-in;
+}
+
+.aLabel.jtk-hover, .jtk-source-hover, .jtk-target-hover {
+  background-color: rgba(40, 47, 144, 0.9);
+  color: white;
+  z-index:10;
+}
+
+.aLabel {
+  background-color: white;
+  padding: 0.3em;
+  border-radius: 0.5em;
+  border: 0.8px solid black;
+  cursor: pointer;
+  font-size: 1.1em;
+  text-align: center;
+}

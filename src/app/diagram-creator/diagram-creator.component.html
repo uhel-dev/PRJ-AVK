@@ -1,43 +1,48 @@
-<div id="diagram-boundary-id" class="container">
+<div class="container" style="position: relative">
 
-  <div class="diagram-boundary"  (dblclick)="openNewStateDialog($event)">
-    <span (keydown)="logKey($event)">
-
-
-
-    <div class="state"
-         *ngFor="let state of states"
-         (dblclick)="toggleAcceptableState(state.name)"
-         [id]="state.name"
-         cdkDrag
-         cdkDragBoundary=".diagram-boundary"
-         [ngStyle]="{'top': state.y - 15 +'px', 'left': state.x - 40 + 'px', 'position': 'absolute'}"
-         >
-
-      <div *ngIf="state.isInitial" id="triangle-right"></div>
-      <div *ngIf="state.isInitial" class="inner-triangle"></div>
-      <svg style="position:absolute;left:0px;top:0px" width="4" height="4" pointer-events="all" position="absolute" version="1.1" xmlns="http://www.w3.org/1999/xhtml">
-        <circle cx="2" cy="2" r="2" version="1.1" xmlns="http://www.w3.org/1999/xhtml" style="" fill="#456" stroke="none"></circle>
-      </svg>
+  <div id="diagram-boundary-id" class="diagram-boundary"  (dblclick)="openNewStateDialog($event)">
+    <mat-slider
+      thumbLabel
+      [displayWith]="formatLabel"
+      tickInterval="1"
+      min="1"
+      max="1000"></mat-slider>
+      <button mat-mini-fab color="primary" style="float: right; margin-top: 5px; margin-right: 5px;" (click)="restartCanvas()"><span>X</span></button>
+      <div class="state"
+           *ngFor="let state of states"
+           [id]="state.name"
+           [ngStyle]="{'top.px': state.top, 'left.px': state.left}">
+      <div *ngIf="state.isInitial" style="position:absolute; top: 0%; left: -35%; font-size: 40px;">> </div>
 
 
-      <div *ngIf="state.isAcceptable" id="circle-around"></div>
+        <div class="showMe" *ngIf="showLabelsMenu" style="border: 1px solid black; height: 2vh; width: 9vw; ">
+          X X X
+        </div>
+
 
       <button id="menu-button"
               class="state-options-menu"
               mat-button
               #trigger
-              [matMenuTriggerFor]="afterMenu">{{state.name}}
+              [ngStyle]="{'border': state.isAcceptable ? '1px solid black' : 'none'}"
+              [matMenuTriggerFor]="clickMenuTrigger">{{state.name}}
       </button>
 
-      <mat-menu #afterMenu="matMenu" xPosition="after" overlapTrigger="false">
-        <button mat-menu-item (click)="setInitialState(state.name)">
-          <mat-icon>stars</mat-icon>
+
+
+      <mat-menu #clickMenuTrigger="matMenu" xPosition="after">
+        <button mat-menu-item (click)="toggleInitialState(state.name)">
+          <mat-icon>play_circle_outline</mat-icon>
           <span>Initial State</span>
         </button>
 
+        <button mat-menu-item (click)="toggleAcceptableState(state.name)">
+          <mat-icon>check_circle_outline</mat-icon>
+          <span>Accepting State</span>
+        </button>
+
         <button mat-menu-item (click)="openRenameStateDialog(state.name)">
-          <mat-icon>rate_review</mat-icon>
+          <mat-icon>edit</mat-icon>
           <span>Rename state</span>
         </button>
         <button mat-menu-item (click)="removeClickedState(state.name)">
@@ -46,9 +51,11 @@
         </button>
       </mat-menu>
     </div>
-    </span>
   </div>
+
 </div>
+
+
 
 
 
